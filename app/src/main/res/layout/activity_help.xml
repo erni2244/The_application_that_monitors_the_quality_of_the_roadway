@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".help.HelpActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/infohelp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text='Jesteś w aplikacji "Gsensor", służy ona do rejestrowania dziur na drodze podczas jazdy samochodem. Aby aplikacja mogła działać prawidłowo należy umieścić telefon w jednakowej stabilnej pozycji. Aby rozpocząć zbieranie danych należy przejść do okna "zbieranie danych" klikając przycisk o nazwie "rozpocznij wykrywanie i  nacisnąć "Start". aby przerwać zapis danych należy nacisnąć "Stop".  Aby otworzyć mapę z twoją lokalizacja oraz wszystkimi nierównościami zaznaczonymi na niej należy wybrać opcję "pokaż  dziury" z głównego menu. ' />
+    </LinearLayout>
+</android.support.constraint.ConstraintLayout>

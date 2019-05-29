@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Zbieranieinformacji.Zbieranieinfo">
+
+
+    <LinearLayout
+        android:id="@+id/Layout1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="bottom"
+        android:orientation="vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/OSX1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:text="X"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:layout_editor_absoluteX="176dp" />
+
+        <TextView
+            android:id="@+id/OSY1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:text="Y"
+            app:layout_constraintTop_toBottomOf="@+id/OSX1"
+            tools:layout_editor_absoluteX="176dp" />
+
+        <TextView
+            android:id="@+id/OSZ1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:text="Z"
+            app:layout_constraintTop_toBottomOf="@+id/OSY1"
+            tools:layout_editor_absoluteX="176dp" />
+
+        <TextView
+            android:id="@+id/wiadomosc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="." />
+
+        <TextView
+            android:id="@+id/GPS"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="GPS" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/Layout2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="50dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <Button
+            android:id="@+id/start1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/holo_blue_light"
+            android:text="Start" />
+
+    </LinearLayout>
+
+
+</android.support.constraint.ConstraintLayout>
