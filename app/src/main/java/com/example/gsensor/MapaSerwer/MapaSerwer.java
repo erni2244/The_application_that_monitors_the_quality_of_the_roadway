@@ -19,7 +19,7 @@ public class MapaSerwer extends AppCompatActivity {
 
         WebView webView = (WebView)findViewById(R.id.idweb);
 
-        webView.loadUrl("http://46.41.148.242/dziury2.html");
+        webView.loadUrl("http://46.41.148.242");
         webView.setWebViewClient(new WebViewClient());
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
