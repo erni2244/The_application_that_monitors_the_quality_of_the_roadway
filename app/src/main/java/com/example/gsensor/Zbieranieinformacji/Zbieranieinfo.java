@@ -3,6 +3,7 @@ package com.example.gsensor.Zbieranieinformacji;
 import android.Manifest;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -23,44 +24,24 @@ import android.widget.Toast;
 
 import com.example.gsensor.Bazadanychpaczka.Bazadanych;
 import com.example.gsensor.Bazadanychpaczka.Bazatabele;
-import com.example.gsensor.GPSlocalization;
+//import com.example.gsensor.GPSlocalization;
 import com.example.gsensor.MapaSerwer.wysylanie;
 import com.example.gsensor.R;
 
-public class Zbieranieinfo extends AppCompatActivity implements SensorEventListener {
+public class Zbieranieinfo extends AppCompatActivity {
 
     private int PERMISION_GPS=1;
-    private Bazadanych mBazadanych;
-    private GPSlocalization GPSpolozenie;
-    private GPSlistener gpslistener;
-    public TextView oskax, oskay, oskaz, lokaliz;
-    public TextView wiadomosc;
-    public Sensor mojsensor;
-    public SensorManager GS;
-    private long lastUpdate = 0;
+  //  public TextView oskax, oskay, oskaz, lokaliz;
+   // public TextView wiadomosc;
     Button start;
-    public int zmiennastart=0;
-    EditText editText;
-
-    private wysylanie wysyl;
-
-    //*****************grawitacja********************
-    private double[] gravity;
-    private double alpha=0.95;
-
-    double czulosc=4.0;
-    //***********************************************
-
-Button but;
-
-    public int ii = 0;
-
+    public static int zmiennastartactivity=0;
+    Intent serviceIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_zbieranieinfo);
-        lokaliz =(TextView) findViewById(R.id.GPS) ;
+    //    lokaliz =(TextView) findViewById(R.id.GPS) ;
         start = (Button)findViewById(R.id.start1);
 
 //*************sprawdzenie uprawnien*************
@@ -68,46 +49,60 @@ Button but;
             ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION},PERMISION_GPS);
         }
 
-        GPSpolozenie= new GPSlocalization(this);
-        gpslistener = new GPSlistener(this,this);
-        mBazadanych = new Bazadanych(this);
 
-        try {//tym nizej mozna oddzielac kolejne wlacaenia apki
-            Cursor cursor = wesbaze();
+  /*      try {//tym nizej mozna oddzielac kolejne wlacaenia apki
+            cursor = wesbaze();
             //pokazbaze(cursor);
         } finally {
             mBazadanych.close();
+            cursor.close();
         }
 
+*/
 
-
-
-        GS = (SensorManager) getSystemService(SENSOR_SERVICE);
-        mojsensor = GS.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        GS.registerListener(this, mojsensor, SensorManager.SENSOR_DELAY_NORMAL);
-
-        oskax = (TextView) findViewById(R.id.OSX1);
+     /*   oskax = (TextView) findViewById(R.id.OSX1);
         oskay = (TextView) findViewById(R.id.OSY1);
         oskaz = (TextView) findViewById(R.id.OSZ1);
         wiadomosc = (TextView) findViewById(R.id.wiadomosc);
-
+*/
 
 
         start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(zmiennastart==0) {zmiennastart = 1; start.setText("STOP");start.setBackgroundResource(android.R.color.holo_red_light);}else{zmiennastart=0;start.setText("START");start.setBackgroundResource(android.R.color.holo_blue_light);}
+                if(zmiennastartactivity==0) {
+                    zmiennastartactivity = 1;
+                    start.setText("STOP");
+                    start.setBackgroundResource(android.R.color.holo_red_light);
+                    startMyService();
+                }else{
+                    zmiennastartactivity=0;
+                    start.setText("START");
+                    start.setBackgroundResource(android.R.color.holo_blue_light);
+                    stopMyService();
+                }
             }
         });
 
-
-wysyl = new wysylanie();
-
     }
+
+    private void startMyService() {
+        Toast.makeText(this,"start ",Toast.LENGTH_LONG).show();
+        serviceIntent = new Intent(this,serviceclass.class);
+        startService(serviceIntent);
+    }
+    private void stopMyService() {
+        serviceIntent = new Intent(this,serviceclass.class);
+        Toast.makeText(this,"end ",Toast.LENGTH_LONG).show();
+        stopService(serviceIntent);
+    }
+
+
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //*********wyswietla zawartosc bazy***************
-    private void pokazbaze(Cursor cursor) {
+ /*   private void pokazbaze(Cursor cursor) {
         StringBuilder budowaczstringa = new StringBuilder("BNSit trainings: \n");
         while(cursor.moveToNext()){
             long id = cursor.getLong(0);
@@ -130,113 +125,21 @@ wysyl = new wysylanie();
         //tutaj miejsce gdzie wyswietlam !!!!!!!!!!!!! jakis leyaut / text view
     }
 
-
+*/
     //************
-    private Cursor wesbaze() {
+  /*  private Cursor wesbaze() {
         SQLiteDatabase database = mBazadanych.getReadableDatabase();
         //UWAGA OSTATNIA WARTOSC TEGO PONIZEJ TO SORTOWANIE !!!!!!!!!!!!!!!
         Cursor cursor = database.query(Bazatabele.TABLE_NAME,new String[]{Bazatabele._ID, Bazatabele.TITLE, Bazatabele.osxx, Bazatabele.osyy, Bazatabele.oszz, Bazatabele.dlugosc, Bazatabele.szerokosc},null,null,null,null,null);
         startManagingCursor(cursor);
         return cursor;
     }
-
-//**************dodaje kolejne wartosci do bazy***********************
-    private void dodajwartosc(String title, String osxxx, String osyyy, String oszzz, String dlugosc, String szerokosc) {
-        SQLiteDatabase database = (SQLiteDatabase) mBazadanych.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(Bazatabele.TITLE, title);
-        values.put(Bazatabele.osxx, osxxx);
-        values.put(Bazatabele.osyy, osyyy);
-        values.put(Bazatabele.oszz, oszzz);
-        values.put(Bazatabele.dlugosc, dlugosc);
-        values.put(Bazatabele.szerokosc, szerokosc);
-        database.insertOrThrow(Bazatabele.TABLE_NAME,null, values);
-    }
-
-
-
-//******************************metoda wywolywana gdy akcelerometr odczyta zmiane wartosci***************
-    @Override
-    public void onSensorChanged(SensorEvent zdazenie) {
-
-        Sensor mySensor = zdazenie.sensor;
-double[] linear_acceleration=new double[3];
-double wypadkowa;
-double wstrzas;
-
-        if (mySensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-            oskax.setText("Wartość x: " + zdazenie.values[0]);
-            oskay.setText("Wartość y: " + zdazenie.values[1]);
-            oskaz.setText("Wartość z: " + zdazenie.values[2]);
-            String OSKAX = "" + zdazenie.values[0];
-            String OSKAY = "" + zdazenie.values[1];
-            String OSKAZ = "" + zdazenie.values[2];
-            String dlugoscGEO;
-            String szerokoscGEO;
-
-            if (gravity == null) {
-                gravity = new double[3];
-                gravity[0] = zdazenie.values[0];
-                gravity[0] = zdazenie.values[1];
-                gravity[0] = zdazenie.values[2];
-            } else{
-//**************filtr dolnoprzepustowy********************
-                gravity[0] = alpha * gravity[0] + (1 - alpha) * zdazenie.values[0];
-                gravity[1] = alpha * gravity[1] + (1 - alpha) * zdazenie.values[1];
-                gravity[2] = alpha * gravity[2] + (1 - alpha) * zdazenie.values[2];
-
-//**************korekta***********************************
-                linear_acceleration[0] = zdazenie.values[0] - gravity[0];
-                linear_acceleration[1] = zdazenie.values[1] - gravity[1];
-                linear_acceleration[2] = zdazenie.values[2] - gravity[2];
-
-                wypadkowa=Math.sqrt(gravity[0]*gravity[0]+gravity[1]*gravity[1]+gravity[2]*gravity[2]);
-                wstrzas=linear_acceleration[0]*gravity[0]/wypadkowa + linear_acceleration[1]*gravity[1]/wypadkowa + linear_acceleration[2]*gravity[2]/wypadkowa;
-
-                long curTime = System.currentTimeMillis();
-
-if(wstrzas>czulosc && GPSpolozenie.podajdlugosc()!=null && zmiennastart==1 &&(curTime - lastUpdate) > 500){
-    Toast.makeText(this,"DZIURA!!!! "+wstrzas,Toast.LENGTH_LONG).show();
-    ii = ii + 1;
-    szerokoscGEO = gpslistener.podajszer();
-    dlugoscGEO = gpslistener.podajdlug();
-
-    dodajwartosc("Dziura"+ii,OSKAX,OSKAY,OSKAZ,dlugoscGEO,szerokoscGEO);
-    wysyl.wyslij("http://damianchodorek.com/wsexample/", Double.parseDouble(dlugoscGEO),Double.parseDouble(szerokoscGEO));
-
-    lastUpdate = curTime;
-
-                lokaliz.setText("szerokosc/dlugosc: " + gpslistener.podajszer() + " : " + gpslistener.podajdlug());
-
-                //---------------------------------------------
-                wiadomosc.setText("Ilosc wykrytych dziur = " + ii);
-            }
-
-
-        }
-
-
-
-        }
-    }
-
-//--------------------------------------------------------------------------------
+*/
 
 
 
 
 
-
-
-
-
-
-
-
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int event) {
-
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -265,34 +168,38 @@ if(wstrzas>czulosc && GPSpolozenie.podajdlugosc()!=null && zmiennastart==1 &&(cu
 
     @Override
     protected void onStart() {
-
+            //Toast.makeText(this,"onStart!!!! ",Toast.LENGTH_LONG).show();
         super.onStart();
     }
 
 
     @Override
     protected void onStop() {
-
+            //Toast.makeText(this,"onStop!!!! ",Toast.LENGTH_LONG).show();
         super.onStop();
     }
 
 
     @Override
     protected void onResume() {
-
+            //Toast.makeText(this,"onResume!!!! ",Toast.LENGTH_LONG).show();
         super.onResume();
     }
 
-
     @Override
     protected void onRestart() {
+               //Toast.makeText(this,"onRestart!!!! ",Toast.LENGTH_LONG).show();
 
         super.onRestart();
+
     }
 
     @Override
     protected void onDestroy() {
-
+        //Toast.makeText(this,"onDestroy!!!! ",Toast.LENGTH_LONG).show();
+        if(zmiennastartactivity==1){
+        stopMyService();
+        }
         super.onDestroy();
     }
 }

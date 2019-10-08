@@ -32,13 +32,9 @@ Activity ac;
 
 public GPSlistener(Context context, Activity activity){
     co=context;
-    ac=activity;
+   ac=activity;
     enableLocation();
 }
-
-
-
-
 
     private void enableLocation() {
         if (PermissionsManager.areLocationPermissionsGranted(co)) {
@@ -66,14 +62,6 @@ public GPSlistener(Context context, Activity activity){
         }
     }
 
-/*
-    public String podajszer() { return "" + originLocation.getLatitude();}
-
-    public String podajdlug() {
-        return "" + originLocation.getLongitude();
-    }
-
-*/
 
 public String podajszer() {
     return latitude;
